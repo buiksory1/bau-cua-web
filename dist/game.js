@@ -39,7 +39,57 @@ const lid = document.querySelector("#lid");
 const mascotGrid = document.querySelector("#mascotGrid");
 const previousResults = document.querySelector("#previousResults");
 const shakeAudio = document.querySelector("#shakeAudio");
+const roomCodeText = document.querySelector("#roomCode");
+const copyCodeButton = document.querySelector("#copyCodeButton");
+const connectionStatus = document.querySelector("#connectionStatus");
 const diceImages = [0, 1, 2].map((index) => document.querySelector(`#die${index}`));
+
+function createRoomCode() {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = new Uint8Array(12);
+  globalThis.crypto?.getRandomValues?.(bytes);
+  const raw = Array.from(bytes, (value) => alphabet[value % alphabet.length]).join("");
+  return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8)}`;
+}
+
+function getRoomCode() {
+  const saved = localStorage.getItem("bauCuaRoomCode");
+  if (saved && /^[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(saved)) return saved;
+  const created = createRoomCode();
+  localStorage.setItem("bauCuaRoomCode", created);
+  return created;
+}
+
+const roomCode = getRoomCode();
+roomCodeText.textContent = roomCode;
+
+function relayTopic() {
+  return `baucua-${roomCode.replaceAll("-", "").toLowerCase()}`;
+}
+
+async function sendResultToCalculator() {
+  connectionStatus.textContent = "Đang gửi kết quả...";
+  connectionStatus.classList.remove("is-error", "is-sent");
+  try {
+    const response = await fetch(`https://ntfy.sh/${relayTopic()}`, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify({
+        version: 1,
+        type: "baucua-result",
+        dice: state.dice,
+        names: state.dice.map((id) => ITEMS[id].name),
+        sentAt: Date.now(),
+      }),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    connectionStatus.textContent = "Đã gửi kết quả";
+    connectionStatus.classList.add("is-sent");
+  } catch (_) {
+    connectionStatus.textContent = "Mất mạng – chưa gửi được";
+    connectionStatus.classList.add("is-error");
+  }
+}
 
 function asset(name) {
   return `${ASSET_ROOT}${name}`;
@@ -248,6 +298,7 @@ function openLid() {
   renderLid();
   renderHighlights();
   renderAction();
+  sendResultToCalculator();
 }
 
 function showScreen(screen) {
@@ -273,6 +324,16 @@ soundButton.addEventListener("click", () => {
 actionButton.addEventListener("click", () => {
   if (state.lidOpen) closeAndShake();
   else openLid();
+});
+
+copyCodeButton.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(roomCode);
+    copyCodeButton.textContent = "ĐÃ CHÉP";
+    window.setTimeout(() => { copyCodeButton.textContent = "CHÉP"; }, 1400);
+  } catch (_) {
+    connectionStatus.textContent = `Mã: ${roomCode}`;
+  }
 });
 
 document.addEventListener("visibilitychange", () => {

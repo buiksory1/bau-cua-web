@@ -1,4 +1,4 @@
-const CACHE_NAME = "bau-cua-web-v3";
+const CACHE_NAME = "bau-cua-web-v4";
 const APP_FILES = [
   "./",
   "./index.html",

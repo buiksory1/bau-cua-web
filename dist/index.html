@@ -24,7 +24,17 @@
           <h1>BẦU CUA</h1>
           <p>TẾT 2027–2028</p>
         </div>
-        <button id="playButton" class="play-button" type="button" disabled>ĐANG TẢI...</button>
+        <div class="home-actions">
+          <button id="playButton" class="play-button" type="button" disabled>ĐANG TẢI...</button>
+          <div class="connection-card" aria-label="Kết nối ứng dụng máy tính">
+            <span class="connection-label">MÃ KẾT NỐI</span>
+            <div class="connection-code-row">
+              <strong id="roomCode">----</strong>
+              <button id="copyCodeButton" class="copy-code-button" type="button">CHÉP</button>
+            </div>
+            <span id="connectionStatus" class="connection-status">Sẵn sàng gửi kết quả</span>
+          </div>
+        </div>
       </div>
     </section>
 
