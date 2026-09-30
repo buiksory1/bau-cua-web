@@ -1,21 +1,21 @@
 const ITEMS = {
-  0: { name: "TÔM", tile: "dice_nai.png", cube: "item_tom.png" },
-  1: { name: "CUA", tile: "dice_bau.png", cube: "item_bau.png" },
-  2: { name: "CÁ", tile: "dice_cua.png", cube: "item_cua.png" },
-  3: { name: "GÀ", tile: "dice_ca.png", cube: "item_nai.png" },
-  4: { name: "BẦU", tile: "dice_tom.png", cube: "item_ca.png" },
-  5: { name: "NAI", tile: "dice_ga.png", cube: "item_ga.png" },
+  0: { name: "TÔM", tile: "dice_nai.webp", cube: "item_tom.webp" },
+  1: { name: "CUA", tile: "dice_bau.webp", cube: "item_bau.webp" },
+  2: { name: "CÁ", tile: "dice_cua.webp", cube: "item_cua.webp" },
+  3: { name: "GÀ", tile: "dice_ca.webp", cube: "item_nai.webp" },
+  4: { name: "BẦU", tile: "dice_tom.webp", cube: "item_ca.webp" },
+  5: { name: "NAI", tile: "dice_ga.webp", cube: "item_ga.webp" },
 };
 
 const GRID_ORDER = [[5, 4, 3], [2, 1, 0]];
 const ASSET_ROOT = "assets/";
 const IMAGE_ASSETS = [
-  "bat.png",
-  "dia.png",
+  "bat.webp",
+  "dia.webp",
   "icon.png",
   ...["bau", "ca", "cua", "ga", "nai", "tom"].flatMap((name) => [
-    `dice_${name}.png`,
-    `item_${name}.png`,
+    `dice_${name}.webp`,
+    `item_${name}.webp`,
   ]),
 ];
 
@@ -48,13 +48,24 @@ function asset(name) {
 function preloadImage(name) {
   return new Promise((resolve) => {
     const image = new Image();
-    image.onload = async () => {
-      try {
-        await image.decode?.();
-      } catch (_) {}
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
       resolve();
     };
-    image.onerror = resolve;
+    const timeout = window.setTimeout(finish, 6_000);
+    image.onload = async () => {
+      try {
+        await Promise.race([
+          image.decode?.(),
+          new Promise((done) => window.setTimeout(done, 2_000)),
+        ]);
+      } catch (_) {}
+      finish();
+    };
+    image.onerror = finish;
     image.src = asset(name);
   });
 }
@@ -63,9 +74,13 @@ async function preloadGameAssets() {
   playButton.disabled = true;
   playButton.textContent = "ĐANG TẢI...";
 
-  await Promise.allSettled([
+  const preloadWork = Promise.allSettled([
     ...IMAGE_ASSETS.map(preloadImage),
     fetch(asset("sfx_diceshake.mp3"), { cache: "force-cache" }),
+  ]);
+  await Promise.race([
+    preloadWork,
+    new Promise((resolve) => window.setTimeout(resolve, 8_000)),
   ]);
 
   playButton.disabled = false;

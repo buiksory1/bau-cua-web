@@ -1,4 +1,4 @@
-const CACHE_NAME = "bau-cua-web-v2";
+const CACHE_NAME = "bau-cua-web-v3";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -6,12 +6,12 @@ const APP_FILES = [
   "./game.js",
   "./manifest.webmanifest",
   "./assets/icon.png",
-  "./assets/bat.png",
-  "./assets/dia.png",
+  "./assets/bat.webp",
+  "./assets/dia.webp",
   "./assets/sfx_diceshake.mp3",
   ...["bau", "ca", "cua", "ga", "nai", "tom"].flatMap((name) => [
-    `./assets/dice_${name}.png`,
-    `./assets/item_${name}.png`,
+    `./assets/dice_${name}.webp`,
+    `./assets/item_${name}.webp`,
   ]),
 ];
 
