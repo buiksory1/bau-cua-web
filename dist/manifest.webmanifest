@@ -1,0 +1,17 @@
+{
+  "name": "Bầu Cua Tết 2027–2028",
+  "short_name": "Bầu Cua",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#075c27",
+  "theme_color": "#075c27",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

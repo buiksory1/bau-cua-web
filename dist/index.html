@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#075c27">
+  <meta name="description" content="Game Bầu Cua trực tuyến">
+  <title>Bầu Cua Tết 2027–2028</title>
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" as="image" href="assets/dia.png">
+  <link rel="preload" as="image" href="assets/bat.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app" class="app-shell">
+    <section id="homeScreen" class="screen home-screen is-active" aria-label="Trang chính">
+      <div class="home-pattern" aria-hidden="true"></div>
+      <div class="home-content">
+        <div class="title-lockup" aria-label="Bầu Cua Tết 2027–2028">
+          <h1>BẦU CUA</h1>
+          <p>TẾT 2027–2028</p>
+        </div>
+        <button id="playButton" class="play-button" type="button">CHƠI NGAY</button>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen game-screen" aria-label="Bàn Bầu Cua">
+      <div class="game-pattern" aria-hidden="true"></div>
+      <div class="game-stage">
+        <div id="previousResults" class="previous-results" aria-label="Kết quả ván trước"></div>
+
+        <div id="bowlArea" class="bowl-area">
+          <div class="bowl-set">
+            <img class="plate" src="assets/dia.png" alt="Đĩa">
+            <div class="dice-cluster" aria-live="polite">
+              <img id="die0" class="die die-top" src="" alt="">
+              <img id="die1" class="die die-left" src="" alt="">
+              <img id="die2" class="die die-right" src="" alt="">
+            </div>
+          </div>
+          <img id="lid" class="lid is-open" src="assets/bat.png" alt="Nắp đĩa">
+        </div>
+
+        <div class="game-controls">
+          <button id="homeButton" class="round-control" type="button" aria-label="Về trang chính">⌂</button>
+          <span class="ornament" aria-hidden="true">•&nbsp; ❖ &nbsp;•</span>
+          <button id="soundButton" class="round-control" type="button" aria-label="Bật tắt âm thanh">♪</button>
+        </div>
+
+        <div id="mascotGrid" class="mascot-grid" aria-label="Sáu linh vật"></div>
+
+        <div class="action-row">
+          <button id="actionButton" class="action-button" type="button">XÓC</button>
+        </div>
+      </div>
+      <div class="flower-border" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <audio id="shakeAudio" preload="auto" src="assets/sfx_diceshake.mp3"></audio>
+  <script src="game.js" defer></script>
+</body>
+</html>
