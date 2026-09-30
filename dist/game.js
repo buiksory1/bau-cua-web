@@ -9,6 +9,15 @@ const ITEMS = {
 
 const GRID_ORDER = [[5, 4, 3], [2, 1, 0]];
 const ASSET_ROOT = "assets/";
+const IMAGE_ASSETS = [
+  "bat.png",
+  "dia.png",
+  "icon.png",
+  ...["bau", "ca", "cua", "ga", "nai", "tom"].flatMap((name) => [
+    `dice_${name}.png`,
+    `item_${name}.png`,
+  ]),
+];
 
 const state = {
   dice: [4, 4, 4],
@@ -16,7 +25,8 @@ const state = {
   lidOpen: true,
   shaking: false,
   soundEnabled: true,
-  randomRoundsRemaining: 0,
+  // Hai ván đầu tiên random toàn bộ ba xúc xắc, sau đó mới dùng công thức.
+  randomRoundsRemaining: 2,
 };
 
 const homeScreen = document.querySelector("#homeScreen");
@@ -33,6 +43,45 @@ const diceImages = [0, 1, 2].map((index) => document.querySelector(`#die${index}
 
 function asset(name) {
   return `${ASSET_ROOT}${name}`;
+}
+
+function preloadImage(name) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = async () => {
+      try {
+        await image.decode?.();
+      } catch (_) {}
+      resolve();
+    };
+    image.onerror = resolve;
+    image.src = asset(name);
+  });
+}
+
+async function preloadGameAssets() {
+  playButton.disabled = true;
+  playButton.textContent = "ĐANG TẢI...";
+
+  await Promise.allSettled([
+    ...IMAGE_ASSETS.map(preloadImage),
+    fetch(asset("sfx_diceshake.mp3"), { cache: "force-cache" }),
+  ]);
+
+  playButton.disabled = false;
+  playButton.textContent = "CHƠI NGAY";
+}
+
+function requestGameFullscreen() {
+  const root = document.documentElement;
+  const request = root.requestFullscreen
+    || root.webkitRequestFullscreen
+    || root.msRequestFullscreen;
+  if (!request || document.fullscreenElement || document.webkitFullscreenElement) return;
+  try {
+    const pending = request.call(root, { navigationUI: "hide" });
+    pending?.catch?.(() => {});
+  } catch (_) {}
 }
 
 function randomInt(maxExclusive) {
@@ -192,6 +241,7 @@ function showScreen(screen) {
 }
 
 playButton.addEventListener("click", () => {
+  requestGameFullscreen();
   showScreen("game");
   renderAll();
 });
@@ -216,6 +266,7 @@ document.addEventListener("visibilitychange", () => {
 
 buildGrid();
 renderAll();
+preloadGameAssets();
 
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("./sw.js").catch(() => {});

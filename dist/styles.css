@@ -18,6 +18,7 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  overscroll-behavior: none;
   background: #041e10;
   font-family: Georgia, "Times New Roman", serif;
 }
@@ -124,6 +125,12 @@ button {
 .action-button:active {
   transform: translateY(4px);
   box-shadow: 0 3px 0 #5d0909, 0 7px 16px rgb(0 0 0 / 38%), inset 0 2px 0 rgb(255 255 255 / 28%);
+}
+
+.play-button:disabled {
+  cursor: wait;
+  opacity: .82;
+  filter: saturate(.75);
 }
 
 .game-screen {
@@ -317,22 +324,23 @@ button {
   position: absolute;
   z-index: 10;
   left: 50%;
-  top: 51%;
+  bottom: 0;
   width: 100%;
   height: auto;
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
   will-change: transform;
+  transform-origin: center bottom;
   transition: transform 480ms cubic-bezier(.4, 0, .2, 1);
 }
 
 .lid.is-closed {
-  transform: translate(-50%, -50%) scale(1.03);
+  transform: translateX(-50%);
 }
 
 .lid.is-open {
-  transform: translate(-188%, -116%) rotate(-13deg) scale(.94);
+  transform: translate(-210%, -85%) rotate(-13deg) scale(.94);
 }
 
 .lid.is-shaking {
@@ -340,8 +348,8 @@ button {
 }
 
 @keyframes lidShake {
-  from { transform: translate(calc(-50% - 10px), calc(-50% - 3px)) scale(1.03) rotate(-.8deg); }
-  to { transform: translate(calc(-50% + 10px), calc(-50% + 3px)) scale(1.03) rotate(.8deg); }
+  from { transform: translateX(calc(-50% - 10px)) rotate(-.8deg); }
+  to { transform: translateX(calc(-50% + 10px)) rotate(.8deg); }
 }
 
 .game-controls {
